@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>盆景与苏派盆景互动题库</title>
+  <style>
+    :root {
+      --page-bg: #eef3e6;
+      --app-bg: #f7f8ef;
+      --jade: #8eb1a7;
+      --deep: #3f6f64;
+      --pale: #e5e6cb;
+      --gold: #c9a96a;
+      --correct: #6fae75;
+      --wrong: #d96c6c;
+      --ink: #294f47;
+      --muted: #71847e;
+      --white: #fffef9;
+      --shadow: 0 14px 34px rgba(63, 111, 100, .15);
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--page-bg);
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,.9), transparent 26%),
+        radial-gradient(circle at 80% 90%, rgba(142,177,167,.2), transparent 30%),
+        var(--page-bg);
+    }
+
+    button, select { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .phone {
+      position: relative;
+      width: 390px;
+      height: 844px;
+      max-width: calc(100vw - 24px);
+      max-height: calc(100vh - 24px);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: 36px;
+      background: var(--app-bg);
+      box-shadow: 0 20px 60px rgba(63, 111, 100, .25);
+      isolation: isolate;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 100% 0, rgba(229,230,203,.65), transparent 27%),
+        radial-gradient(circle at 0 70%, rgba(142,177,167,.12), transparent 35%);
+      z-index: -1;
+    }
+
+    .status-bar {
+      height: 42px;
+      padding: 12px 22px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--deep);
+      user-select: none;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .signal { letter-spacing: -2px; font-size: 10px; }
+    .battery {
+      width: 20px;
+      height: 10px;
+      padding: 1px;
+      border: 1.5px solid currentColor;
+      border-radius: 3px;
+      position: relative;
+    }
+    .battery::before {
+      content: "";
+      display: block;
+      width: 80%;
+      height: 100%;
+      border-radius: 1px;
+      background: currentColor;
+    }
+    .battery::after {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 2px;
+      width: 2px;
+      height: 4px;
+      border-radius: 0 2px 2px 0;
+      background: currentColor;
+    }
+
+    .screen {
+      position: relative;
+      height: calc(100% - 42px);
+      overflow: hidden;
+    }
+
+    .view {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      animation: viewIn .35s ease both;
+    }
+
+    .view.active { display: flex; }
+
+    @keyframes viewIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .scroll-area {
+      min-height: 0;
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: none;
+      padding: 10px 20px 24px;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    .home-view .scroll-area {
+      display: flex;
+      flex-direction: column;
+      padding-top: 4px;
+    }
+
+    .brand-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .brand-mark {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--deep);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .brand-mark::before {
+      content: "盆";
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      color: white;
+      border-radius: 50%;
+      background: linear-gradient(145deg, var(--deep), var(--jade));
+      box-shadow: 0 5px 12px rgba(63,111,100,.22);
+    }
+
+    .ghost-link {
+      min-height: 48px;
+      border: 0;
+      background: transparent;
+      color: var(--deep);
+      font-size: 12px;
+      padding: 10px 0 10px 10px;
+      cursor: pointer;
+    }
+
+    .eyebrow {
+      margin: 0 0 9px;
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .18em;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    .home-title {
+      margin-bottom: 10px;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 31px;
+      line-height: 1.3;
+      letter-spacing: .04em;
+      color: var(--deep);
+    }
+
+    .home-subtitle {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+
+    .bonsai-scene {
+      position: relative;
+      height: 260px;
+      min-height: 260px;
+      margin: 15px 0 18px;
+      overflow: hidden;
+      border-radius: 28px;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(255,255,255,.9) 0 34%, transparent 35%),
+        linear-gradient(155deg, #e4eee4 0%, #f4f2df 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .moon-window {
+      position: absolute;
+      width: 190px;
+      height: 190px;
+      left: 50%;
+      top: 20px;
+      transform: translateX(-50%);
+      border: 9px solid rgba(255,254,249,.75);
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 1px rgba(63,111,100,.1);
+    }
+
+    .cloud {
+      position: absolute;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(63,111,100,.18);
+    }
+    .cloud.one { width: 74px; top: 58px; left: 28px; }
+    .cloud.two { width: 58px; top: 86px; right: 24px; }
+    .cloud::before, .cloud::after {
+      content: "";
+      position: absolute;
+      height: 2px;
+      background: inherit;
+      border-radius: inherit;
+    }
+    .cloud::before { width: 28px; top: -8px; left: 18px; }
+    .cloud::after { width: 36px; top: 8px; right: 8px; }
+
+    .tree-trunk {
+      position: absolute;
+      left: 174px;
+      bottom: 63px;
+      width: 24px;
+      height: 122px;
+      border-radius: 70% 20% 45% 25%;
+      background: linear-gradient(90deg, #785e45, #aa8b61 55%, #6d543d);
+      transform: rotate(-8deg);
+      box-shadow: inset 4px 0 rgba(255,255,255,.12);
+    }
+    .tree-trunk::before, .tree-trunk::after {
+      content: "";
+      position: absolute;
+      height: 14px;
+      border-radius: 20px;
+      background: #806247;
+      transform-origin: left center;
+    }
+    .tree-trunk::before { width: 74px; top: 23px; left: 10px; transform: rotate(-34deg); }
+    .tree-trunk::after { width: 68px; top: 58px; left: 9px; transform: rotate(28deg); }
+
+    .foliage {
+      position: absolute;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #5d8c78, #91b197);
+      box-shadow: inset -8px -10px rgba(46,92,75,.12), 0 7px 16px rgba(63,111,100,.13);
+    }
+    .foliage.f1 { width: 110px; height: 43px; left: 82px; top: 72px; }
+    .foliage.f2 { width: 104px; height: 40px; right: 60px; top: 94px; }
+    .foliage.f3 { width: 91px; height: 35px; left: 119px; top: 40px; }
+    .foliage.f4 { width: 72px; height: 31px; right: 72px; top: 54px; }
+
+    .rock {
+      position: absolute;
+      left: 104px;
+      bottom: 51px;
+      width: 52px;
+      height: 47px;
+      clip-path: polygon(17% 100%, 0 57%, 29% 7%, 54% 35%, 74% 0, 100% 100%);
+      background: linear-gradient(145deg, #80968b, #4f7469);
+    }
+
+    .pot {
+      position: absolute;
+      left: 50%;
+      bottom: 31px;
+      width: 160px;
+      height: 43px;
+      transform: translateX(-50%);
+      border-radius: 5px 5px 28px 28px;
+      background: linear-gradient(180deg, #ba9460, #8a6847);
+      box-shadow: 0 12px 18px rgba(76,69,47,.2);
+    }
+    .pot::before {
+      content: "";
+      position: absolute;
+      left: -8px;
+      top: -7px;
+      width: 176px;
+      height: 13px;
+      border-radius: 7px;
+      background: #c8a575;
+    }
+    .pot::after {
+      content: "";
+      position: absolute;
+      left: 16px;
+      bottom: -8px;
+      width: 128px;
+      height: 9px;
+      border-radius: 0 0 8px 8px;
+      background: #74583d;
+    }
+
+    .home-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .level-button, .primary-button, .secondary-button {
+      min-height: 54px;
+      border: 0;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+    }
+    .level-button:active, .primary-button:active, .secondary-button:active,
+    .option-card:active { transform: scale(.98); }
+
+    .level-button {
+      padding: 14px 12px;
+      color: white;
+      font-size: 15px;
+      font-weight: 800;
+      background: linear-gradient(145deg, #6f9d90, var(--deep));
+      box-shadow: 0 10px 20px rgba(63,111,100,.24);
+    }
+    .level-button.advanced {
+      color: var(--deep);
+      background: linear-gradient(145deg, #eee8c8, #d5d2a6);
+      box-shadow: 0 10px 20px rgba(124,116,67,.15);
+    }
+
+    .home-note {
+      margin: 13px 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .page-nav {
+      padding: 8px 20px 6px;
+      min-height: 54px;
+      display: grid;
+      grid-template-columns: 48px 1fr 62px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-button {
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(63,111,100,.12);
+      border-radius: 14px;
+      color: var(--deep);
+      background: rgba(255,255,255,.66);
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(63,111,100,.08);
+    }
+
+    .nav-title {
+      margin: 0;
+      text-align: center;
+      color: var(--deep);
+      font-size: 16px;
+      white-space: nowrap;
+    }
+
+    .score-pill {
+      justify-self: end;
+      padding: 8px 9px;
+      border-radius: 12px;
+      color: var(--deep);
+      background: var(--pale);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .difficulty-view .scroll-area { padding-top: 16px; }
+    .section-title {
+      margin-bottom: 8px;
+      font-family: "STKaiti", "KaiTi", serif;
+      color: var(--deep);
+      font-size: 27px;
+    }
+    .section-subtitle {
+      margin-bottom: 22px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .difficulty-card {
+      position: relative;
+      display: block;
+      width: 100%;
+      min-height: 178px;
+      margin-bottom: 16px;
+      padding: 22px;
+      overflow: hidden;
+      text-align: left;
+      border: 1px solid rgba(255,255,255,.8);
+      border-radius: 25px;
+      color: var(--ink);
+      background: linear-gradient(145deg, #fefdf6, #e3eee2);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+    }
+    .difficulty-card.advanced {
+      background: linear-gradient(145deg, #fffdf3, #e9e2bc);
+    }
+    .difficulty-card::after {
+      content: "";
+      position: absolute;
+      width: 114px;
+      height: 114px;
+      right: -23px;
+      top: -23px;
+      border: 1px solid rgba(63,111,100,.12);
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 14px rgba(255,255,255,.18);
+    }
+    .difficulty-icon {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 15px;
+      border-radius: 15px;
+      color: white;
+      background: var(--deep);
+      font-size: 22px;
+    }
+    .difficulty-card h3 { margin-bottom: 6px; font-size: 20px; }
+    .difficulty-card p { margin-bottom: 9px; color: var(--muted); font-size: 13px; }
+    .difficulty-card small { color: var(--deep); font-weight: 700; }
+
+    .quiz-view .scroll-area {
+      padding-top: 5px;
+      padding-bottom: 116px;
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .progress-track {
+      height: 8px;
+      margin-bottom: 16px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #dfe7d7;
+    }
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--jade), var(--deep));
+      transition: width .35s ease;
+    }
+
+    .question-card {
+      padding: 19px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255,255,255,.85);
+      border-radius: 24px;
+      background: rgba(255,254,249,.9);
+      box-shadow: var(--shadow);
+    }
+
+    .type-tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      margin-bottom: 12px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      color: var(--deep);
+      background: var(--pale);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .question-text {
+      margin: 0;
+      color: #294f47;
+      font-size: 18px;
+      line-height: 1.55;
+      font-weight: 800;
+    }
+
+    .image-placeholder {
+      position: relative;
+      height: 155px;
+      margin-top: 16px;
+      overflow: hidden;
+      border-radius: 19px;
+      background: linear-gradient(155deg, #dfeade, #f3ecd4);
+      display: grid;
+      place-items: end center;
+      padding-bottom: 13px;
+      color: var(--deep);
+      font-size: 11px;
+    }
+    .image-placeholder::before {
+      content: "盆景";
+      position: absolute;
+      top: 22px;
+      width: 82px;
+      height: 82px;
+      display: grid;
+      place-items: center;
+      border: 6px solid rgba(255,255,255,.65);
+      border-radius: 50%;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 24px;
+      color: rgba(63,111,100,.72);
+      box-shadow: 0 8px 18px rgba(63,111,100,.1);
+    }
+
+    .options-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .option-card {
+      width: 100%;
+      min-height: 52px;
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 30px 1fr 22px;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      border: 1.5px solid rgba(63,111,100,.12);
+      border-radius: 17px;
+      color: var(--ink);
+      background: rgba(255,254,249,.84);
+      cursor: pointer;
+      transition: .18s ease;
+    }
+
+    .option-key {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: var(--deep);
+      background: #edf1df;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .option-card.selected {
+      border-color: var(--jade);
+      background: #eef5ed;
+      box-shadow: 0 6px 16px rgba(63,111,100,.1);
+    }
+    .option-card.selected .option-key {
+      color: white;
+      background: var(--jade);
+    }
+    .option-card.correct {
+      border-color: var(--correct);
+      background: #eaf5e8;
+    }
+    .option-card.wrong {
+      border-color: var(--wrong);
+      background: #fbeaea;
+    }
+    .option-state { color: transparent; font-weight: 900; }
+    .option-card.correct .option-state { color: var(--correct); }
+    .option-card.wrong .option-state { color: var(--wrong); }
+    .option-card:disabled { cursor: default; opacity: 1; }
+
+    .matching-list { display: grid; gap: 12px; }
+    .matching-row {
+      padding: 14px;
+      border: 1.5px solid rgba(63,111,100,.12);
+      border-radius: 18px;
+      background: rgba(255,254,249,.88);
+    }
+    .matching-row.correct { border-color: var(--correct); background: #eaf5e8; }
+    .matching-row.wrong { border-color: var(--wrong); background: #fbeaea; }
+    .matching-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .matching-select {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 38px 0 12px;
+      border: 1px solid rgba(63,111,100,.18);
+      border-radius: 13px;
+      color: var(--ink);
+      background: white;
+      outline: none;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 14px;
+      padding: 15px;
+      border-radius: 18px;
+      font-size: 13px;
+      line-height: 1.65;
+      animation: cardIn .3s ease both;
+    }
+    .feedback.show { display: block; }
+    .feedback.correct { color: #376d3d; background: #e6f2e4; }
+    .feedback.wrong { color: #934949; background: #f8e8e8; }
+    .feedback strong { display: block; margin-bottom: 4px; font-size: 14px; }
+    .answer-guide {
+      display: block;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed currentColor;
+      font-weight: 700;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: scale(.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .action-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 14px 20px 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      background: linear-gradient(180deg, rgba(247,248,239,0), rgba(247,248,239,.96) 24%, var(--app-bg) 52%);
+    }
+
+    .primary-button {
+      width: 100%;
+      padding: 0 18px;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(145deg, #79a89b, var(--deep));
+      box-shadow: 0 10px 20px rgba(63,111,100,.22);
+    }
+    .primary-button:disabled {
+      color: #94a39f;
+      background: #e1e5dc;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    .secondary-button {
+      width: 100%;
+      padding: 0 18px;
+      color: var(--deep);
+      font-weight: 800;
+      border: 1px solid rgba(63,111,100,.14);
+      background: rgba(255,255,255,.74);
+    }
+
+    .result-view .scroll-area {
+      padding-top: 10px;
+      padding-bottom: 30px;
+      text-align: center;
+    }
+
+    .medal {
+      position: relative;
+      width: 112px;
+      height: 112px;
+      margin: 10px auto 20px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: white;
+      background: linear-gradient(145deg, #dbc184, var(--gold));
+      box-shadow: 0 14px 28px rgba(153,123,64,.24), inset 0 0 0 9px rgba(255,255,255,.28);
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 36px;
+    }
+    .medal::before, .medal::after {
+      content: "";
+      position: absolute;
+      bottom: -20px;
+      width: 31px;
+      height: 48px;
+      background: var(--deep);
+      clip-path: polygon(0 0, 100% 0, 82% 100%, 50% 80%, 17% 100%);
+      z-index: -1;
+    }
+    .medal::before { left: 25px; transform: rotate(10deg); }
+    .medal::after { right: 25px; transform: rotate(-10deg); }
+
+    .result-title {
+      margin-bottom: 8px;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 24px;
+      color: var(--deep);
+    }
+    .result-score {
+      margin-bottom: 18px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .result-score strong {
+      color: var(--deep);
+      font-size: 25px;
+    }
+
+    .accuracy-ring {
+      --percent: 0;
+      width: 145px;
+      height: 145px;
+      margin: 0 auto 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--deep) calc(var(--percent) * 1%), #dfe7d7 0);
+      position: relative;
+    }
+    .accuracy-ring::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      background: var(--app-bg);
+    }
+    .accuracy-value { position: relative; z-index: 1; }
+    .accuracy-value strong { display: block; font-size: 30px; color: var(--deep); }
+    .accuracy-value span { font-size: 11px; color: var(--muted); }
+
+    .result-level {
+      margin: 0 auto 15px;
+      padding: 15px;
+      border-radius: 18px;
+      color: var(--deep);
+      background: var(--pale);
+      font-weight: 800;
+    }
+    .best-score {
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .result-actions { display: grid; gap: 10px; }
+
+    .toast {
+      position: absolute;
+      left: 50%;
+      bottom: 92px;
+      z-index: 20;
+      max-width: 80%;
+      padding: 10px 15px;
+      border-radius: 999px;
+      color: white;
+      background: rgba(41,79,71,.92);
+      font-size: 12px;
+      transform: translate(-50%, 14px);
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (hover: hover) {
+      .level-button:hover, .primary-button:hover, .secondary-button:hover,
+      .difficulty-card:hover, .option-card:not(:disabled):hover {
+        transform: translateY(-2px);
+        filter: brightness(1.02);
+      }
+    }
+
+    @media (max-width: 430px), (max-height: 880px) {
+      body { padding: 0; }
+      .phone {
+        width: min(390px, 100vw);
+        height: min(844px, 100vh);
+        max-width: none;
+        max-height: none;
+        border-radius: 0;
+        border: 0;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="phone" aria-label="盆景知识互动题库 App">
+    <header class="status-bar" aria-hidden="true">
+      <span id="statusTime">09:41</span>
+      <span class="status-icons">
+        <span class="signal">● ● ●</span>
+        <span>⌁</span>
+        <span class="battery"></span>
+      </span>
+    </header>
+
+    <div class="screen">
+      <section id="homeView" class="view home-view active">
+        <div class="scroll-area">
+          <div class="brand-row">
+            <span class="brand-mark">江南盆景学堂</span>
+            <button class="ghost-link" data-action="show-difficulty">题库介绍 →</button>
+          </div>
+          <p class="eyebrow">SUZHOU BONSAI</p>
+          <h1 class="home-title">盆景与苏派盆景<br>互动题库</h1>
+          <p class="home-subtitle">在小小盆景中，发现江南园林的美</p>
+
+          <div class="bonsai-scene" aria-label="苏派盆景插画">
+            <span class="moon-window"></span>
+            <span class="cloud one"></span>
+            <span class="cloud two"></span>
+            <span class="tree-trunk"></span>
+            <span class="foliage f1"></span>
+            <span class="foliage f2"></span>
+            <span class="foliage f3"></span>
+            <span class="foliage f4"></span>
+            <span class="rock"></span>
+            <span class="pot"></span>
+          </div>
+
+          <div class="home-actions">
+            <button class="level-button" data-start="simple">简单题库</button>
+            <button class="level-button advanced" data-start="advanced">进阶题库</button>
+          </div>
+          <p class="home-note">选择题库，开始你的盆景知识挑战吧！</p>
+        </div>
+      </section>
+
+      <section id="difficultyView" class="view difficulty-view">
+        <nav class="page-nav">
+          <button class="back-button" data-action="home" aria-label="返回首页">←</button>
+          <h2 class="nav-title">选择题库</h2>
+          <span></span>
+        </nav>
+        <div class="scroll-area">
+          <h2 class="section-title">今天想挑战哪一组？</h2>
+          <p class="section-subtitle">每道题都配有知识解析，答错也没关系，观察和发现就是学习的开始。</p>
+
+          <button class="difficulty-card" data-start="simple">
+            <span class="difficulty-icon">芽</span>
+            <h3>简单题库</h3>
+            <p>适合低年级 · 15 道题</p>
+            <small>判断、选择、看图、配对为主 →</small>
+          </button>
+
+          <button class="difficulty-card advanced" data-start="advanced">
+            <span class="difficulty-icon">雅</span>
+            <h3>进阶题库</h3>
+            <p>适合中高年级 · 19 道题</p>
+            <small>分类、流派、历史知识为主 →</small>
+          </button>
+        </div>
+      </section>
+
+      <section id="quizView" class="view quiz-view">
+        <nav class="page-nav">
+          <button class="back-button" data-action="exit-quiz" aria-label="返回首页">←</button>
+          <h2 id="quizTitle" class="nav-title">简单题库</h2>
+          <span id="scorePill" class="score-pill">0 分</span>
+        </nav>
+
+        <div id="quizScroll" class="scroll-area">
+          <div class="progress-head">
+            <span id="questionCount">第 1 / 15 题</span>
+            <span id="progressPercent">7%</span>
+          </div>
+          <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+
+          <article class="question-card">
+            <span id="typeTag" class="type-tag">判断题</span>
+            <h3 id="questionText" class="question-text"></h3>
+            <div id="imagePlaceholder" class="image-placeholder" hidden>此处可替换盆景图片</div>
+          </article>
+
+          <div id="answerArea"></div>
+          <div id="feedback" class="feedback" aria-live="polite"></div>
+        </div>
+
+        <div class="action-bar">
+          <button id="submitButton" class="primary-button" type="button">提交答案</button>
+          <button id="nextButton" class="primary-button" type="button" hidden>下一题</button>
+        </div>
+      </section>
+
+      <section id="resultView" class="view result-view">
+        <div class="scroll-area">
+          <div class="medal">成</div>
+          <h2 id="resultTitle" class="result-title"></h2>
+          <p id="resultScore" class="result-score"></p>
+          <div id="accuracyRing" class="accuracy-ring">
+            <div class="accuracy-value">
+              <strong id="accuracyText">0%</strong>
+              <span>正确率</span>
+            </div>
+          </div>
+          <div id="resultLevel" class="result-level"></div>
+          <p id="bestScore" class="best-score"></p>
+          <div class="result-actions">
+            <button class="primary-button" data-action="retry">再答一次</button>
+            <button class="secondary-button" data-action="switch">挑战另一个难度</button>
+            <button class="secondary-button" data-action="home">返回首页</button>
+          </div>
+        </div>
+      </section>
+
+      <div id="toast" class="toast" role="status"></div>
+    </div>
+  </main>
+
+  <script>
+    const simpleQuestions = [
+      { id: "s1", difficulty: "simple", type: "trueFalse", question: "盆景就是普通的盆栽植物。", options: ["对", "错"], answer: 1, explanation: "盆景不只是种植物，还包含造型、构图和自然景观的表达。" },
+      { id: "s2", difficulty: "simple", type: "single", question: "盆景最大的特点是什么？", options: ["长得特别高", "把自然景观缩小到盆中", "一定会开花结果"], answer: 1, explanation: "盆景把自然景观、树木造型和审美意境浓缩在小小的盆中。" },
+      { id: "s3", difficulty: "simple", type: "trueFalse", question: "盆景可以放在桌子上欣赏。", options: ["对", "错"], answer: 0, explanation: "很多盆景体量较小，可以放在桌面、展台或庭院中欣赏。" },
+      { id: "s4", difficulty: "simple", type: "imageSingle", question: "请观察图片，这更像哪一种？", options: ["普通花草", "盆景"], answer: 1, image: "placeholder", explanation: "盆景通常有明显的造型、层次和景观感。" },
+      { id: "s5", difficulty: "simple", type: "single", question: "苏派盆景来自哪里？", options: ["北京", "苏州", "广州"], answer: 1, explanation: "苏派盆景是以苏州地区为代表的盆景流派。" },
+      { id: "s6", difficulty: "simple", type: "trueFalse", question: "苏派盆景和苏州园林有关系。", options: ["对", "错"], answer: 0, explanation: "苏派盆景常带有江南园林清秀、雅致、含蓄的审美。" },
+      { id: "s7", difficulty: "simple", type: "single", question: "苏派盆景常见的树冠造型像什么？", options: ["云朵", "房子", "小船"], answer: 0, explanation: "苏派盆景常见“云片式”造型，树冠像层层云朵。" },
+      { id: "s8", difficulty: "simple", type: "imageMultiple", question: "观察一张苏派盆景图片，里面可能有哪些元素？", options: ["树根", "树枝", "云片状树冠", "盆器", "山石", "汽车"], answer: [0,1,2,3,4], image: "placeholder", explanation: "苏派盆景中常见树根、枝干、云片状树冠、盆器和山石等元素。" },
+      { id: "s9", difficulty: "simple", type: "single", question: "以树木为主体的盆景叫什么？", options: ["树木盆景", "山水盆景", "水旱盆景"], answer: 0, explanation: "以树木为主要表现对象的盆景叫树木盆景。" },
+      { id: "s10", difficulty: "simple", type: "trueFalse", question: "山水盆景主要表现山石和自然山川。", options: ["对", "错"], answer: 0, explanation: "山水盆景常通过山石、水面等元素表现自然山川景象。" },
+      { id: "s11", difficulty: "simple", type: "single", question: "“盆中的园林”通常指哪一类盆景？", options: ["微型盆景", "水旱盆景", "树木盆景"], answer: 1, explanation: "水旱盆景常同时表现陆地、水面、植物和山石，像缩小的园林景观。" },
+      { id: "s12", difficulty: "simple", type: "matching", question: "把盆景类型和特点配对。", pairs: [
+        { left: "树木盆景", right: "以树木为主体" },
+        { left: "山水盆景", right: "以山石表现自然山川" },
+        { left: "微型盆景", right: "尺寸较小，精致可爱" }
+      ], explanation: "不同盆景类型有不同的表现重点。" },
+      { id: "s13", difficulty: "simple", type: "trueFalse", question: "云片式造型像层层云朵。", options: ["对", "错"], answer: 0, explanation: "云片式造型是苏派盆景的重要特点之一。" },
+      { id: "s14", difficulty: "simple", type: "trueFalse", question: "盆景一定只有树，不能有山石。", options: ["对", "错"], answer: 1, explanation: "盆景中可以有树木、山石、水面、苔藓和盆器等元素。" },
+      { id: "s15", difficulty: "simple", type: "multiple", question: "普通树和盆景有哪些不同？", options: ["盆景通常更小", "盆景种在盆里", "盆景有人工作型", "盆景一定比普通树高", "盆景更像一件立体艺术品"], answer: [0,1,2,4], explanation: "盆景不是普通树木的简单缩小，而是经过造型和构图的艺术表达。" }
+    ];
+
+    const advancedQuestions = [
+      { id: "a1", difficulty: "advanced", type: "single", question: "盆景不仅是植物种植，更是一种什么？", options: ["体育活动", "艺术造型", "普通装饰"], answer: 1, explanation: "盆景是一种融合植物、造型、构图和意境的艺术形式。" },
+      { id: "a2", difficulty: "advanced", type: "trueFalse", question: "盆景通过小小的盆器表现自然景观和审美意境。", options: ["对", "错"], answer: 0, explanation: "盆景追求“以小见大”，在有限空间中表现自然之美。" },
+      { id: "a3", difficulty: "advanced", type: "matching", question: "把朝代和盆景发展特点配对。", pairs: [
+        { left: "汉代", right: "盆景开始出现" },
+        { left: "唐代", right: "出现较早的盆景图像" },
+        { left: "宋代", right: "文人盆景兴起" }
+      ], explanation: "中国盆景历史悠久，不同朝代有不同的发展特点。" },
+      { id: "a4", difficulty: "advanced", type: "single", question: "中国盆景大约有多少年历史？", options: ["200 多年", "500 多年", "2000 多年"], answer: 2, explanation: "中国盆景有悠久历史，通常认为已有两千多年发展脉络。" },
+      { id: "a5", difficulty: "advanced", type: "multiple", question: "下面哪些属于盆景的常见分类？", options: ["树木盆景", "山水盆景", "水旱盆景", "微型盆景", "机械盆景"], answer: [0,1,2,3], explanation: "树木、山水、水旱和微型盆景都是常见分类。" },
+      { id: "a6", difficulty: "advanced", type: "imageSingle", question: "以山石为主、表现山川景色的图片，属于哪种盆景？", options: ["树木盆景", "山水盆景", "微型盆景"], answer: 1, image: "placeholder", explanation: "以山石和山川意境为主要表现对象的盆景属于山水盆景。" },
+      { id: "a7", difficulty: "advanced", type: "single", question: "一盆盆景里同时有山石、水面和植物，它更接近哪一类？", options: ["水旱盆景", "微型盆景", "树木盆景"], answer: 0, explanation: "水旱盆景常同时表现水面、陆地、植物和山石。" },
+      { id: "a8", difficulty: "advanced", type: "single", question: "中国五大传统盆景流派中，苏派盆景的代表地区是哪里？", options: ["苏州", "四川", "广东"], answer: 0, explanation: "苏派盆景以苏州地区为代表。" },
+      { id: "a9", difficulty: "advanced", type: "single", question: "苏派盆景最有代表性的造型特点是？", options: ["云片式造型", "完全自然生长", "只用山石不用植物"], answer: 0, explanation: "云片式造型是苏派盆景的重要识别特征。" },
+      { id: "a10", difficulty: "advanced", type: "trueFalse", question: "苏派盆景讲究清秀、雅致、精巧，常带有江南园林的审美。", options: ["对", "错"], answer: 0, explanation: "苏派盆景的审美与江南园林的精巧、雅致关系密切。" },
+      { id: "a11", difficulty: "advanced", type: "matching", question: "把盆景流派和代表地区配对。", pairs: [
+        { left: "苏派盆景", right: "苏州" },
+        { left: "扬派盆景", right: "扬州" },
+        { left: "川派盆景", right: "四川" },
+        { left: "岭南派盆景", right: "广东" },
+        { left: "海派盆景", right: "上海" }
+      ], explanation: "不同盆景流派与不同地域文化和造型传统有关。" },
+      { id: "a12", difficulty: "advanced", type: "single", question: "扬派盆景常见的特点是什么？", options: ["枝片分明，造型严谨", "完全不修剪", "只表现水面"], answer: 0, explanation: "扬派盆景常给人枝片清晰、结构严谨的感觉。" },
+      { id: "a13", difficulty: "advanced", type: "single", question: "川派盆景给人的感觉通常更接近哪一种？", options: ["苍劲古朴", "轻巧可爱", "色彩鲜艳"], answer: 0, explanation: "川派盆景常表现出苍劲、古朴、有力量感的特点。" },
+      { id: "a14", difficulty: "advanced", type: "trueFalse", question: "岭南派盆景强调自然生长与人工修剪结合，造型比较灵动。", options: ["对", "错"], answer: 0, explanation: "岭南派盆景常强调自然与人工修剪之间的结合。" },
+      { id: "a15", difficulty: "advanced", type: "single", question: "海派盆景的特点更接近哪一种？", options: ["融合创新", "只保留一种固定形式", "只适合古代庭院"], answer: 0, explanation: "海派盆景具有吸收融合、开放创新的特点。" },
+      { id: "a16", difficulty: "advanced", type: "imageMultiple", question: "观察苏派盆景图片，哪些特点可以说明它像苏派盆景？", options: ["有云片状树冠", "枝干有层次", "造型精巧", "整体清秀雅致", "有江南园林的感觉", "完全不需要修剪"], answer: [0,1,2,3,4], image: "placeholder", explanation: "苏派盆景常见云片状树冠、层次分明的枝干和清秀雅致的江南审美。" },
+      { id: "a17", difficulty: "advanced", type: "multiple", question: "普通树木照片和苏派盆景照片相比，哪些说法正确？", options: ["大小不同", "盆景有人工作型", "盆景种在盆中", "盆景更讲究层次", "盆景更像一件艺术品", "盆景完全不能修剪"], answer: [0,1,2,3,4], explanation: "苏派盆景强调造型、层次和艺术审美，并不是任由植物随意生长。" },
+      { id: "a18", difficulty: "advanced", type: "multiple", question: "观察盆景时，里面可能有哪些元素？", options: ["树根", "枝干", "山石", "水面", "苔藓", "盆器", "交通信号灯"], answer: [0,1,2,3,4,5], explanation: "盆景中常见树根、枝干、山石、水面、苔藓和盆器等自然与造景元素。" },
+      { id: "a19", difficulty: "advanced", type: "multiple", question: "下面哪些词可以用来形容苏派盆景？", options: ["秀", "雅", "巧", "精", "乱", "笨重"], answer: [0,1,2,3], explanation: "苏派盆景常用“秀、雅、巧、精”来概括其审美特点。" }
+    ];
+
+    const questionBanks = { simple: simpleQuestions, advanced: advancedQuestions };
+    const bankNames = { simple: "简单题库", advanced: "进阶题库" };
+    const typeNames = {
+      trueFalse: "判断题",
+      single: "单选题",
+      multiple: "多选题",
+      matching: "配对题",
+      imageSingle: "看图单选题",
+      imageMultiple: "看图多选题"
+    };
+
+    const state = {
+      difficulty: "simple",
+      questions: [],
+      index: 0,
+      score: 0,
+      selected: [],
+      matchingAnswers: {},
+      answered: false,
+      lastCorrect: false
+    };
+
+    const views = [...document.querySelectorAll(".view")];
+    const quizScroll = document.getElementById("quizScroll");
+    const answerArea = document.getElementById("answerArea");
+    const feedback = document.getElementById("feedback");
+    const submitButton = document.getElementById("submitButton");
+    const nextButton = document.getElementById("nextButton");
+
+    function showView(id) {
+      views.forEach(view => view.classList.toggle("active", view.id === id));
+    }
+
+    function startQuiz(difficulty) {
+      state.difficulty = difficulty;
+      state.questions = questionBanks[difficulty];
+      state.index = 0;
+      state.score = 0;
+      renderQuestion();
+      showView("quizView");
+    }
+
+    function currentQuestion() {
+      return state.questions[state.index];
+    }
+
+    function renderQuestion() {
+      const question = currentQuestion();
+      state.selected = [];
+      state.matchingAnswers = {};
+      state.answered = false;
+      state.lastCorrect = false;
+
+      const current = state.index + 1;
+      const total = state.questions.length;
+      const percent = Math.round((current / total) * 100);
+
+      document.getElementById("quizTitle").textContent = bankNames[state.difficulty];
+      document.getElementById("scorePill").textContent = `${state.score} 分`;
+      document.getElementById("questionCount").textContent = `第 ${current} / ${total} 题`;
+      document.getElementById("progressPercent").textContent = `${percent}%`;
+      document.getElementById("progressFill").style.width = `${percent}%`;
+      document.getElementById("typeTag").textContent = typeNames[question.type];
+      document.getElementById("questionText").textContent = question.question;
+      document.getElementById("imagePlaceholder").hidden = !question.image;
+
+      feedback.className = "feedback";
+      feedback.innerHTML = "";
+      nextButton.hidden = true;
+      submitButton.hidden = false;
+      submitButton.disabled = true;
+      submitButton.textContent = "提交答案";
+
+      if (question.type === "matching") {
+        renderMatching(question);
+      } else {
+        renderOptions(question);
+        const isInstant = ["trueFalse", "single", "imageSingle"].includes(question.type);
+        submitButton.hidden = isInstant;
+      }
+
+      quizScroll.scrollTop = 0;
+    }
+
+    function renderOptions(question) {
+      answerArea.innerHTML = `<div class="options-list">${question.options.map((option, index) => `
+        <button class="option-card" type="button" data-option="${index}">
+          <span class="option-key">${String.fromCharCode(65 + index)}</span>
+          <span>${option}</span>
+          <span class="option-state">✓</span>
+        </button>
+      `).join("")}</div>`;
+    }
+
+    function renderMatching(question) {
+      const choices = question.pairs.map(pair => pair.right);
+      answerArea.innerHTML = `<div class="matching-list">${question.pairs.map((pair, index) => `
+        <label class="matching-row" data-match-row="${index}">
+          <span class="matching-label">${pair.left}</span>
+          <select class="matching-select" data-match="${index}">
+            <option value="">请选择对应特点</option>
+            ${choices.map(choice => `<option value="${choice}">${choice}</option>`).join("")}
+          </select>
+        </label>
+      `).join("")}</div>`;
+    }
+
+    function handleOptionClick(button) {
+      if (state.answered) return;
+      const question = currentQuestion();
+      const index = Number(button.dataset.option);
+      const isMultiple = ["multiple", "imageMultiple"].includes(question.type);
+
+      if (isMultiple) {
+        const existing = state.selected.indexOf(index);
+        if (existing >= 0) state.selected.splice(existing, 1);
+        else state.selected.push(index);
+        button.classList.toggle("selected");
+        submitButton.disabled = state.selected.length === 0;
+      } else {
+        state.selected = [index];
+        evaluateAnswer();
+      }
+    }
+
+    function evaluateAnswer() {
+      if (state.answered) return;
+      const question = currentQuestion();
+      let isCorrect = false;
+
+      if (question.type === "matching") {
+        const allAnswered = question.pairs.every((_, index) => state.matchingAnswers[index]);
+        if (!allAnswered) {
+          showToast("请先完成所有配对");
+          return;
+        }
+        isCorrect = question.pairs.every((pair, index) => state.matchingAnswers[index] === pair.right);
+      } else if (Array.isArray(question.answer)) {
+        const selected = [...state.selected].sort((a, b) => a - b);
+        const answer = [...question.answer].sort((a, b) => a - b);
+        isCorrect = selected.length === answer.length && selected.every((value, index) => value === answer[index]);
+      } else {
+        isCorrect = state.selected[0] === question.answer;
+      }
+
+      state.answered = true;
+      state.lastCorrect = isCorrect;
+      if (isCorrect) state.score += 1;
+      document.getElementById("scorePill").textContent = `${state.score} 分`;
+
+      markAnswers(question);
+      showFeedback(question, isCorrect);
+      submitButton.hidden = true;
+      nextButton.hidden = false;
+      nextButton.textContent = state.index === state.questions.length - 1 ? "查看成绩" : "下一题";
+      window.setTimeout(() => feedback.scrollIntoView({ behavior: "smooth", block: "nearest" }), 80);
+    }
+
+    function markAnswers(question) {
+      if (question.type === "matching") {
+        question.pairs.forEach((pair, index) => {
+          const row = answerArea.querySelector(`[data-match-row="${index}"]`);
+          const select = row.querySelector("select");
+          const correct = state.matchingAnswers[index] === pair.right;
+          row.classList.add(correct ? "correct" : "wrong");
+          select.disabled = true;
+        });
+        return;
+      }
+
+      const correctAnswers = Array.isArray(question.answer) ? question.answer : [question.answer];
+      answerArea.querySelectorAll(".option-card").forEach((button, index) => {
+        button.disabled = true;
+        button.classList.remove("selected");
+        const stateIcon = button.querySelector(".option-state");
+        if (correctAnswers.includes(index)) {
+          button.classList.add("correct");
+          stateIcon.textContent = "✓";
+        } else if (state.selected.includes(index)) {
+          button.classList.add("wrong");
+          stateIcon.textContent = "×";
+        }
+      });
+    }
+
+    function showFeedback(question, isCorrect) {
+      feedback.className = `feedback show ${isCorrect ? "correct" : "wrong"}`;
+      const title = isCorrect
+        ? "答对啦！你发现了盆景的小秘密。"
+        : "再观察一下，正确答案已经为你标出。";
+      const answerGuide = getAnswerGuide(question);
+      feedback.innerHTML = `
+        <strong>${isCorrect ? "✓ " : "× "}${title}</strong>
+        <span>${question.explanation}</span>
+        ${isCorrect ? "" : `<span class="answer-guide">正确答案：${answerGuide}</span>`}
+      `;
+    }
+
+    function getAnswerGuide(question) {
+      if (question.type === "matching") {
+        return question.pairs.map(pair => `${pair.left}—${pair.right}`).join("；");
+      }
+      const answers = Array.isArray(question.answer) ? question.answer : [question.answer];
+      return answers.map(index => `${String.fromCharCode(65 + index)}. ${question.options[index]}`).join("、");
+    }
+
+    function nextQuestion() {
+      if (!state.answered) return;
+      if (state.index < state.questions.length - 1) {
+        state.index += 1;
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      const total = state.questions.length;
+      const accuracy = Math.round((state.score / total) * 100);
+      const storageKey = `bonsaiBest_${state.difficulty}`;
+      let best = 0;
+      try {
+        best = Math.max(Number(localStorage.getItem(storageKey) || 0), state.score);
+        localStorage.setItem(storageKey, String(best));
+      } catch (error) {
+        best = state.score;
+      }
+
+      let level;
+      if (accuracy >= 90) level = "盆景小大师";
+      else if (accuracy >= 70) level = "江南小园丁";
+      else if (accuracy >= 50) level = "盆景观察员";
+      else level = "继续加油，再挑战一次";
+
+      document.getElementById("resultTitle").textContent = `恭喜你完成了${bankNames[state.difficulty]}！`;
+      document.getElementById("resultScore").innerHTML = `你的得分：<strong>${state.score} / ${total}</strong>`;
+      document.getElementById("accuracyText").textContent = `${accuracy}%`;
+      document.getElementById("accuracyRing").style.setProperty("--percent", accuracy);
+      document.getElementById("resultLevel").textContent = level;
+      document.getElementById("bestScore").textContent = `历史最高分：${best} / ${total}`;
+      showView("resultView");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function updateStatusTime() {
+      const now = new Date();
+      document.getElementById("statusTime").textContent =
+        `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+    }
+
+    document.addEventListener("click", event => {
+      const start = event.target.closest("[data-start]");
+      if (start) {
+        startQuiz(start.dataset.start);
+        return;
+      }
+
+      const option = event.target.closest("[data-option]");
+      if (option) {
+        handleOptionClick(option);
+        return;
+      }
+
+      const actionButton = event.target.closest("[data-action]");
+      if (!actionButton) return;
+
+      const action = actionButton.dataset.action;
+      if (action === "home" || action === "exit-quiz") showView("homeView");
+      if (action === "show-difficulty") showView("difficultyView");
+      if (action === "retry") startQuiz(state.difficulty);
+      if (action === "switch") startQuiz(state.difficulty === "simple" ? "advanced" : "simple");
+    });
+
+    document.addEventListener("change", event => {
+      const select = event.target.closest("[data-match]");
+      if (!select || state.answered) return;
+      state.matchingAnswers[Number(select.dataset.match)] = select.value;
+      submitButton.disabled = Object.values(state.matchingAnswers).filter(Boolean).length !== currentQuestion().pairs.length;
+    });
+
+    submitButton.addEventListener("click", evaluateAnswer);
+    nextButton.addEventListener("click", nextQuestion);
+    updateStatusTime();
+    setInterval(updateStatusTime, 30000);
+  </script>
+</body>
+</html>
