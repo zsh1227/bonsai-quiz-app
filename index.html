@@ -941,6 +941,7 @@
           <div id="resultLevel" class="result-level"></div>
           <p id="bestScore" class="best-score"></p>
           <div class="result-actions">
+            <button class="primary-button" data-action="back-kivicube">返回 Kivicube 场景</button>
             <button class="primary-button" data-action="retry">再答一次</button>
             <button class="secondary-button" data-action="switch">挑战另一个难度</button>
             <button class="secondary-button" data-action="home">返回首页</button>
@@ -1009,6 +1010,7 @@
 
     const questionBanks = { simple: simpleQuestions, advanced: advancedQuestions };
     const bankNames = { simple: "简单题库", advanced: "进阶题库" };
+    const kivicubeSceneUrl = "https://www.kivicube.com/face-scenes/LRnKy1wGe4fDFAxt5QXVBF5mLAiKy22P";
     const typeNames = {
       trueFalse: "判断题",
       single: "单选题",
@@ -1285,6 +1287,7 @@
       if (action === "show-difficulty") showView("difficultyView");
       if (action === "retry") startQuiz(state.difficulty);
       if (action === "switch") startQuiz(state.difficulty === "simple" ? "advanced" : "simple");
+      if (action === "back-kivicube") window.location.href = kivicubeSceneUrl;
     });
 
     document.addEventListener("change", event => {
